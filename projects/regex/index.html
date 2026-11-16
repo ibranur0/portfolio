@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Regex: en regex-motor som aldri henger</title>
+  <meta name="description" content="En regex-motor skrevet fra bunnen av. Mønsteret gjøres om til en automat som leser teksten en gang, så kjøretiden er lineær selv for mønstre som får nettleserens egen motor til å henge.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/regex/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/regex/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Regex: en regex-motor som aldri henger">
+  <meta property="og:description" content="En regex-motor skrevet fra bunnen av. Mønsteret gjøres om til en automat som leser teksten en gang, så kjøretiden er lineær selv for mønstre som får nettleserens egen motor til å henge.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/regex.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="regex">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Automater · Lineær kjøretid</p>
+      <h1>Regex</h1>
+      <p>En regex-motor skrevet fra bunnen av. Mønsteret blir til en automat som leser teksten nøyaktig en gang. Derfor kan den ikke henge, uansett hvilket mønster du gir den. Nettleserens egen motor kan det, og nederst på siden kan du måle forskjellen.</p>
+    </header>
+
+    <div class="stack">
+      <section class="panel stack" aria-label="Mønster og tekst">
+        <div class="presets" id="presets" role="group" aria-label="Eksempler"></div>
+
+        <label class="field">
+          <span>Mønster</span>
+          <span class="pattern-row">
+            <span class="slash" aria-hidden="true">/</span>
+            <input class="input" id="pattern" spellcheck="false" autocomplete="off" autocapitalize="off" aria-describedby="status">
+            <span class="slash" aria-hidden="true">/</span>
+          </span>
+        </label>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+
+        <label class="field">
+          <span>Tekst å søke i</span>
+          <textarea class="input" id="text" rows="4" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea>
+        </label>
+
+        <div class="field">
+          <span>Treff</span>
+          <pre class="matches" id="matches" tabindex="0"></pre>
+        </div>
+      </section>
+
+      <section class="panel" aria-labelledby="h-automaton">
+        <h2 class="panel-title" id="h-automaton">Automaten</h2>
+        <p class="hint lead">Slik ser mønsteret ut for motoren. Hver boks tar imot ett tegn. De markerte boksene er alle stedene motoren kan være akkurat nå: den følger alle mulige veier samtidig, i stedet for å prøve en og gå tilbake.</p>
+        <div class="diagram-scroll" tabindex="0" role="img" aria-label="Automaten for mønsteret, tegnet som et jernbanediagram">
+          <svg id="diagram"></svg>
+        </div>
+
+        <div class="tape-wrap" tabindex="0" role="region" aria-label="Teksten tegn for tegn">
+          <div class="tape" id="tape" aria-hidden="true"></div>
+        </div>
+        <div class="toolbar stepper">
+          <button class="btn btn-ghost btn-small" id="step-back" type="button" aria-label="Ett tegn tilbake">←</button>
+          <button class="btn btn-ghost btn-small" id="step-forward" type="button" aria-label="Les ett tegn">Les ett tegn →</button>
+          <button class="btn btn-ghost btn-small" id="step-play" type="button">Spill av</button>
+          <label class="position"><span class="sr-only">Posisjon i teksten</span><input type="range" id="position" min="0" max="0" step="1" value="0"></label>
+        </div>
+        <p class="step-note" id="step-note" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="panel stack" aria-labelledby="h-race">
+        <div>
+          <h2 class="panel-title" id="h-race">Kappløp mot nettleserens motor</h2>
+          <p class="hint lead">Nettleserens RegExp prøver en vei om gangen og går tilbake når den møter veggen. På mønstrene under finnes det dobbelt så mange veier for hvert tegn teksten vokser med. Målingen kjører begge motorene på stadig lengre tekster. Nettleserens motor kjører i en egen tråd og avbrytes hvis den bruker mer enn to sekunder.</p>
+        </div>
+        <div class="toolbar">
+          <div class="seg" role="radiogroup" aria-label="Mønster for målingen" id="evil"></div>
+          <button class="btn btn-primary" id="race" type="button">Start målingen</button>
+        </div>
+        <p class="hint mono" id="race-input"></p>
+        <svg id="chart" viewBox="0 0 720 300" role="img" aria-label="Kjøretid for de to motorene etter tekstlengde, på logaritmisk skala"></svg>
+        <div class="legend">
+          <span><i class="sw-native"></i>Nettleserens RegExp (tilbakesporing)</span>
+          <span><i class="sw-mine"></i>Denne motoren (automat)</span>
+        </div>
+        <p class="race-note" id="race-note" role="status" aria-live="polite">Trykk "Start målingen". Den tar rundt ti sekunder.</p>
+      </section>
+
+      <details class="panel reference">
+        <summary>Hva motoren støtter</summary>
+        <div class="ref-grid">
+          <div><h3>Tegn</h3><p><code>a</code> <code>.</code> <code>\d</code> <code>\w</code> <code>\s</code> <code>\D</code> <code>\W</code> <code>\S</code> <code>\n</code> <code>\t</code> <code>\x41</code> <code>å</code> <code>\.</code></p></div>
+          <div><h3>Tegnklasser</h3><p><code>[abc]</code> <code>[a-z0-9]</code> <code>[^abc]</code> <code>[\w.-]</code></p></div>
+          <div><h3>Gjentakelse</h3><p><code>*</code> <code>+</code> <code>?</code> <code>{3}</code> <code>{2,}</code> <code>{2,5}</code></p></div>
+          <div><h3>Struktur</h3><p><code>ab|cd</code> <code>(...)</code> <code>(?:...)</code> <code>(?&lt;navn&gt;...)</code></p></div>
+          <div><h3>Posisjon</h3><p><code>^</code> <code>$</code> <code>\b</code> <code>\B</code></p></div>
+          <div><h3>Ikke støttet</h3><p>Tilbakereferanser (<code>\1</code>) og lookaround (<code>(?=...)</code>). De kan ikke uttrykkes som en endelig automat, og er prisen for garantert lineær kjøretid. Treffene er de lengste mulige, så late kvantorer (<code>*?</code>) oppfører seg som de grådige.</p></div>
+        </div>
+      </details>
+    </div>
+
+    <p class="hint attribution">
+      Motoren ligger i <code>regex.js</code>. Testene i <code>test.mjs</code> sammenligner den med V8 på 20&nbsp;000 tilfeldige mønstre og kontrollerer at kjøretiden vokser lineært.
+    </p>
+  </main>
+</body>
+</html>

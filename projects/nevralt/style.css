@@ -1,0 +1,27 @@
+.field-panel { padding: clamp(10px, 2vw, 16px); }
+#field { width: 100%; max-width: 560px; height: auto; aspect-ratio: 1; margin: 0 auto; border-radius: var(--radius-m); cursor: crosshair; touch-action: manipulation; }
+.field-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-top: 14px; }
+
+.swatch-0 { background: var(--blue); }
+.swatch-1 { background: var(--rose); }
+
+.twin { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 640px) { .twin { grid-template-columns: minmax(0, 1fr); } }
+.twin svg { width: 100%; height: auto; margin-bottom: 10px; }
+
+.controls { position: sticky; top: 76px; }
+@media (max-width: 900px) { .controls { position: static; } }
+.controls .toolbar .btn { flex: 1 1 auto; }
+
+/* Nettverksdiagram */
+.link { fill: none; stroke-linecap: round; }
+.link-pos { stroke: var(--rose); }
+.link-neg { stroke: var(--blue); }
+.node { fill: var(--surface); stroke: var(--line-strong); stroke-width: 1.5; }
+.node-io { fill: var(--surface-2); stroke: var(--text); }
+.diagram-label { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; text-anchor: middle; }
+
+/* Tapskurve */
+.loss-grid { stroke: var(--line); stroke-width: 1; }
+.loss-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.loss-label { fill: var(--muted); font-family: var(--font-mono); font-size: 10px; }

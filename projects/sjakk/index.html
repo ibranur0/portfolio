@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; worker-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Sjakk: egen sjakkmotor i nettleseren</title>
+  <meta name="description" content="Spill sjakk mot en egenutviklet motor med alfa-beta-søk, transposisjonstabell og hvilesøk. Se dybde, noder per sekund og hovedvariant mens den tenker.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/sjakk/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/sjakk/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Sjakk: egen sjakkmotor i nettleseren">
+  <meta property="og:description" content="Spill sjakk mot en egenutviklet motor med alfa-beta-søk, transposisjonstabell og hvilesøk. Se dybde, noder per sekund og hovedvariant mens den tenker.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/sjakk.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="sjakk">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Sjakkmotor</p>
+      <h1>Sjakk</h1>
+      <p>Motoren er skrevet fra bunnen av. Motorpanelet viser hva den regner på mens den tenker.</p>
+    </header>
+
+    <div class="layout">
+      <section aria-label="Sjakkbrett">
+        <p class="status" id="status" role="status" aria-live="polite">Hvit i trekket</p>
+        <div class="board-row">
+          <div class="evalbar" id="evalbar" role="img" aria-label="Motorens vurdering">
+            <div class="evalbar-fill" id="evalbar-fill"></div>
+          </div>
+          <div class="board-wrap">
+            <div class="board" id="board"></div>
+            <div class="promo" id="promo" hidden role="dialog" aria-label="Velg brikke"></div>
+          </div>
+        </div>
+        <div class="toolbar board-actions">
+          <button class="btn btn-primary" id="new" type="button">Nytt parti</button>
+          <button class="btn btn-ghost" id="undo" type="button">Angre</button>
+          <button class="btn btn-ghost" id="flip" type="button">Snu brettet</button>
+        </div>
+      </section>
+
+      <aside class="stack">
+        <div class="panel">
+          <h2 class="panel-title">Motoren</h2>
+          <div class="stats">
+            <div class="stat"><p class="stat-label">Vurdering</p><p class="stat-value" id="e-score">0,0</p></div>
+            <div class="stat"><p class="stat-label">Dybde</p><p class="stat-value" id="e-depth">0</p></div>
+            <div class="stat"><p class="stat-label">Noder/s</p><p class="stat-value" id="e-nps">0</p></div>
+          </div>
+          <p class="pv" id="e-pv">Hovedvarianten vises her når motoren har tenkt.</p>
+        </div>
+
+        <div class="panel stack">
+          <h2 class="panel-title">Oppsett</h2>
+          <div class="field">
+            <span id="lbl-color">Du spiller</span>
+            <div class="seg" role="radiogroup" aria-labelledby="lbl-color" id="color">
+              <label><input type="radio" name="color" value="0" checked><span>Hvit</span></label>
+              <label><input type="radio" name="color" value="1"><span>Svart</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <span id="lbl-time">Betenkningstid per trekk</span>
+            <div class="seg" role="radiogroup" aria-labelledby="lbl-time" id="time">
+              <label><input type="radio" name="time" value="150"><span>0,15 s</span></label>
+              <label><input type="radio" name="time" value="1000" checked><span>1 s</span></label>
+              <label><input type="radio" name="time" value="4000"><span>4 s</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2 class="panel-title">Trekk</h2>
+          <ol class="moves" id="moves"></ol>
+          <p class="hint" id="moves-empty">Ingen trekk ennå.</p>
+        </div>
+
+        <details class="panel fen">
+          <summary>Stilling (FEN)</summary>
+          <label class="sr-only" for="fen">FEN-streng</label>
+          <input class="input" id="fen" spellcheck="false" autocomplete="off">
+          <div class="toolbar">
+            <button class="btn btn-ghost btn-small" id="fen-load" type="button">Last inn</button>
+            <button class="btn btn-ghost btn-small" id="fen-copy" type="button">Kopier</button>
+          </div>
+          <p class="hint" id="fen-note"></p>
+        </details>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

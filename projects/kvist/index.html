@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Kvist: programmeringsspråk med kompilator og feilsøker</title>
+  <meta name="description" content="Et eget programmeringsspråk som kompileres til bytekode og kjøres i en virtuell maskin. Kjør steg for steg og se stakken, kallstakken og variablene.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/kvist/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/kvist/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Kvist: programmeringsspråk med kompilator og feilsøker">
+  <meta property="og:description" content="Et eget programmeringsspråk som kompileres til bytekode og kjøres i en virtuell maskin. Kjør steg for steg og se stakken, kallstakken og variablene.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/kvist.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="kvist">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Kompilator · Virtuell maskin</p>
+      <h1>Kvist</h1>
+      <p>Et lite programmeringsspråk med funksjoner, closures og lister. Koden din kompileres til bytekode og kjøres i en stakkmaskin. Omvisningen under viser hva som skjer inni maskinen.</p>
+    </header>
+
+    <section class="panel tour" id="tour" aria-label="Omvisning"></section>
+
+    <div class="toolbar controls">
+      <label class="sr-only" for="example">Eksempel</label>
+      <select class="select" id="example"></select>
+      <button class="btn btn-primary" id="run" type="button">Kjør</button>
+      <button class="btn btn-ghost" id="step" type="button" title="Utfør en instruksjon">Steg</button>
+      <button class="btn btn-ghost" id="step-line" type="button" title="Kjør til neste kildelinje">Neste linje</button>
+      <button class="btn btn-ghost" id="play" type="button" title="Kjør sakte, så du kan følge med">Spill av</button>
+      <button class="btn btn-ghost" id="reset" type="button">Nullstill</button>
+      <label class="speed"><span class="sr-only">Avspillingsfart</span><input type="range" id="speed" min="1" max="6" step="1" value="3"></label>
+    </div>
+    <p class="status" id="status" role="status" aria-live="polite">Klar. Trykk "Kjør", eller "Steg" for å følge maskinen.</p>
+
+    <div class="ide">
+      <section class="left">
+        <div class="panel editor-panel">
+          <div class="editor" id="editor-wrap">
+            <div class="gutter" id="gutter" aria-hidden="true"></div>
+            <div class="code">
+              <div class="marker" id="marker" hidden></div>
+              <label class="sr-only" for="editor">Kildekode</label>
+              <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <h2 class="panel-title">Utdata</h2>
+          <pre class="output" id="output" tabindex="0"></pre>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="panel">
+          <h2 class="panel-title" id="bytecode-title">Bytekode</h2>
+          <ol class="bytecode" id="bytecode"><li class="hint">Vises når programmet er kompilert.</li></ol>
+        </div>
+        <div class="panel">
+          <h2 class="panel-title">Stakk</h2>
+          <div class="stack-view" id="stack"><span class="hint">tom</span></div>
+        </div>
+        <div class="panel">
+          <h2 class="panel-title">Kall og variabler</h2>
+          <div class="frames" id="frames"><span class="hint">Ingen kall ennå.</span></div>
+        </div>
+      </aside>
+    </div>
+
+    <details class="panel reference">
+      <summary>Språket på ett minutt</summary>
+      <div class="ref-grid">
+        <div><h3>Verdier</h3><p><code>42</code> <code>3.14</code> <code>"tekst"</code> <code>true</code> <code>nil</code> <code>[1, 2, 3]</code></p></div>
+        <div><h3>Variabler</h3><p><code>let x = 1;</code> deklarerer, <code>x = 2;</code> endrer. Blokker har eget skop.</p></div>
+        <div><h3>Funksjoner</h3><p><code>fn navn(a, b) { return a + b; }</code> eller anonymt: <code>fn(x) {... }</code>. Funksjoner er verdier og husker omgivelsen sin.</p></div>
+        <div><h3>Kontrollflyt</h3><p><code>if... { } else { }</code>, <code>while... { }</code>, <code>for x in liste { }</code>, <code>break</code>, <code>continue</code></p></div>
+        <div><h3>Operatorer</h3><p><code>+ - * / %</code>, <code>== != &lt; &lt;= &gt; &gt;=</code>, <code>and or not</code></p></div>
+        <div><h3>Innebygd</h3><p><code>print len push pop str num floor sqrt abs range join chars</code></p></div>
+      </div>
+    </details>
+  </main>
+</body>
+</html>

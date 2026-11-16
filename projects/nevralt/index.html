@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Nevralt: se et nevralt nettverk lære</title>
+  <meta name="description" content="Interaktivt lekeland for maskinlæring. Bygg et nevralt nettverk, tren det i nettleseren og se beslutningsgrensen forme seg i sanntid.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/nevralt/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/nevralt/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Nevralt: se et nevralt nettverk lære">
+  <meta property="og:description" content="Interaktivt lekeland for maskinlæring. Bygg et nevralt nettverk, tren det i nettleseren og se beslutningsgrensen forme seg i sanntid.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/nevralt.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="nevralt">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Maskinlæring · Visualisering</p>
+      <h1>Nevralt</h1>
+      <p>Nettverket skal lære å skille blå punkter fra rosa. Trykk "Tren" og se beslutningsflaten forme seg. Du kan også klikke i feltet for å legge til egne punkter.</p>
+    </header>
+
+    <div class="layout">
+      <section class="stack" aria-label="Visualisering">
+        <div class="stats">
+          <div class="stat"><p class="stat-label">Epoke</p><p class="stat-value" id="stat-epoch">0</p></div>
+          <div class="stat"><p class="stat-label">Tap</p><p class="stat-value" id="stat-loss">-</p></div>
+          <div class="stat"><p class="stat-label">Treffsikkerhet</p><p class="stat-value" id="stat-acc">-</p></div>
+          <div class="stat"><p class="stat-label">Parametere</p><p class="stat-value" id="stat-params">0</p></div>
+        </div>
+
+        <div class="panel field-panel">
+          <canvas id="field" width="560" height="560" aria-label="Datapunkter og nettverkets beslutningsflate. Klikk for å legge til et punkt."></canvas>
+          <div class="field-foot">
+            <div class="legend">
+              <span><i class="swatch-0"></i>Blå klasse</span>
+              <span><i class="swatch-1"></i>Rosa klasse</span>
+              <span>Bakgrunnen viser hva nettverket tror</span>
+            </div>
+            <div class="seg" role="radiogroup" aria-label="Klasse for nye punkter">
+              <label><input type="radio" name="brush" value="0" checked><span>+ Blå</span></label>
+              <label><input type="radio" name="brush" value="1"><span>+ Rosa</span></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="twin">
+          <div class="panel">
+            <h2 class="panel-title">Nettverket (linjetykkelse viser vektstyrke)</h2>
+            <svg id="diagram" viewBox="0 0 400 190" role="img" aria-label="Diagram over nettverkets lag og vekter"></svg>
+            <div class="legend"><span><i class="swatch-1"></i>Positiv vekt</span><span><i class="swatch-0"></i>Negativ vekt</span></div>
+          </div>
+          <div class="panel">
+            <h2 class="panel-title">Tap per epoke</h2>
+            <svg id="loss" viewBox="0 0 400 190" role="img" aria-label="Kurve over tapet gjennom treningen"></svg>
+            <p class="hint" id="loss-note">Start treningen for å se kurven.</p>
+          </div>
+        </div>
+      </section>
+
+      <aside class="panel stack controls">
+        <h2 class="panel-title">Styring</h2>
+        <div class="toolbar">
+          <button class="btn btn-primary" id="toggle" type="button">Tren</button>
+          <button class="btn btn-ghost" id="step" type="button">Ett steg</button>
+          <button class="btn btn-ghost" id="reset" type="button">Nullstill</button>
+        </div>
+
+        <div class="field">
+          <span id="lbl-data">Datasett</span>
+          <div class="seg" role="radiogroup" aria-labelledby="lbl-data" id="dataset">
+            <label><input type="radio" name="dataset" value="sirkel" checked><span>Sirkel</span></label>
+            <label><input type="radio" name="dataset" value="xor"><span>XOR</span></label>
+            <label><input type="radio" name="dataset" value="klynger"><span>Klynger</span></label>
+            <label><input type="radio" name="dataset" value="spiral"><span>Spiral</span></label>
+          </div>
+        </div>
+
+        <label class="field">
+          <span class="field-row">Støy i dataene <output id="out-noise">0,05</output></span>
+          <input type="range" id="noise" min="0" max="0.2" step="0.01" value="0.05">
+        </label>
+        <label class="field">
+          <span class="field-row">Skjulte lag <output id="out-layers">2</output></span>
+          <input type="range" id="layers" min="1" max="4" step="1" value="2">
+        </label>
+        <label class="field">
+          <span class="field-row">Nevroner per lag <output id="out-neurons">6</output></span>
+          <input type="range" id="neurons" min="1" max="8" step="1" value="6">
+        </label>
+        <label class="field">
+          <span>Aktiveringsfunksjon</span>
+          <select class="select" id="activation">
+            <option value="tanh" selected>tanh</option>
+            <option value="relu">ReLU</option>
+            <option value="sigmoid">Sigmoid</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Læringsrate</span>
+          <select class="select" id="rate">
+            <option value="0.003">0,003</option>
+            <option value="0.01">0,01</option>
+            <option value="0.03" selected>0,03</option>
+            <option value="0.1">0,1</option>
+            <option value="0.3">0,3</option>
+          </select>
+        </label>
+        <p class="hint">Prøv spiralen med ett lag og to nevroner, og se hvorfor dybde og bredde betyr noe.</p>
+      </aside>
+    </div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Stråle: strålesporing i sanntid på skjermkortet</title>
+  <meta name="description" content="En strålesporer skrevet fra bunnen av i GLSL. Glass, metall, myke skygger og dybdeskarphet regnes ut ved å følge lysstråler rundt i scenen, i sanntid i nettleseren.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/straale/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/straale/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Stråle: strålesporing i sanntid på skjermkortet">
+  <meta property="og:description" content="En strålesporer skrevet fra bunnen av i GLSL. Glass, metall, myke skygger og dybdeskarphet regnes ut ved å følge lysstråler rundt i scenen, i sanntid i nettleseren.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/straale.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="straale">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Grafikk · WebGL 2 · GLSL</p>
+      <h1>Stråle</h1>
+      <p>Bildet under er regnet ut piksel for piksel. For hver piksel følges en lysstråle baklengs fra kameraet og rundt i scenen, til den treffer en lyskilde. Speilinger, lysbrytning i glass og myke skygger kommer av seg selv. Dra i bildet for å flytte kameraet, og klikk på en kule for å stille skarpt på den.</p>
+    </header>
+
+    <div class="layout">
+      <section class="stack" aria-label="Bildet">
+        <div class="viewport" id="viewport">
+          <canvas id="canvas" aria-label="Det strålesporede bildet. Dra for å flytte kameraet, klikk for å stille skarpt."></canvas>
+          <p class="overlay" id="overlay" hidden></p>
+        </div>
+        <p class="scene-note" id="scene-note" role="status" aria-live="polite"></p>
+
+        <div class="stats">
+          <div class="stat"><p class="stat-label">Stråler per piksel</p><p class="stat-value" id="s-samples">0</p></div>
+          <div class="stat"><p class="stat-label">Stråler per sekund</p><p class="stat-value" id="s-rays">-</p></div>
+          <div class="stat"><p class="stat-label">Oppløsning</p><p class="stat-value" id="s-size">-</p></div>
+          <div class="stat"><p class="stat-label">Bilder per sekund</p><p class="stat-value" id="s-fps">-</p></div>
+        </div>
+      </section>
+
+      <aside class="panel stack controls">
+        <h2 class="panel-title">Scene</h2>
+        <div class="seg" role="radiogroup" aria-label="Scene" id="scene"></div>
+
+        <label class="field">
+          <span class="field-row">Sprett per stråle <output id="out-bounces">8</output></span>
+          <input type="range" id="bounces" min="1" max="14" step="1" value="8">
+        </label>
+        <label class="field">
+          <span class="field-row">Blenderåpning <output id="out-aperture">0,05</output></span>
+          <input type="range" id="aperture" min="0" max="0.4" step="0.01" value="0.05">
+        </label>
+        <label class="field">
+          <span class="field-row">Fokusavstand <output id="out-focus">9,0</output></span>
+          <input type="range" id="focus" min="2" max="20" step="0.1" value="9">
+        </label>
+        <label class="field">
+          <span class="field-row">Avstand til kameraet <output id="out-distance">9,0</output></span>
+          <input type="range" id="distance" min="4" max="18" step="0.1" value="9">
+        </label>
+        <div class="field">
+          <span id="lbl-quality">Oppløsning</span>
+          <div class="seg" role="radiogroup" aria-labelledby="lbl-quality" id="quality">
+            <label><input type="radio" name="quality" value="0.5"><span>Halv</span></label>
+            <label><input type="radio" name="quality" value="0.75" checked><span>Middels</span></label>
+            <label><input type="radio" name="quality" value="1"><span>Full</span></label>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn btn-ghost btn-small" id="pause" type="button">Pause</button>
+          <button class="btn btn-ghost btn-small" id="save" type="button">Lagre bildet</button>
+        </div>
+        <p class="hint">Med ett sprett ser du bare det lyskilden treffer direkte. Skru opp, og lyset begynner å nå inn i skyggene og gjennom glasset. Piltastene flytter også kameraet når bildet har fokus.</p>
+      </aside>
+    </div>
+
+    <p class="hint attribution">
+      Hele strålesporingen er en fragmentshader i <code>shaders.js</code>: skjæring mellom stråle og kule, materialene, og en tilfeldighetsgenerator per piksel. Bildet er et løpende gjennomsnitt i en flyttallstekstur, så støyen halveres hver gang antall stråler firedobles.
+    </p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,66 @@
+.controls .select { width: auto; flex: 0 1 300px; min-width: 0; }
+.speed { display: inline-flex; align-items: center; width: 110px; }
+.status { margin: 14px 0; min-height: 1.6em; font-size: 14.5px; color: var(--muted); }
+.status.error { color: var(--text); }
+.status strong { color: var(--danger); font-weight: 600; }
+.status code { font-family: var(--font-mono); font-size: 12.5px; }
+
+.ide { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.left, .right { display: grid; gap: 16px; min-width: 0; }
+@media (max-width: 900px) { .ide { grid-template-columns: 1fr; } }
+
+/* Editor: linjenummer til venstre, markør for aktiv linje bak teksten */
+.editor-panel { padding: 0; overflow: hidden; }
+.editor { --lh: 22px; --pad: 14px; display: grid; grid-template-columns: auto minmax(0, 1fr); height: 440px; font-family: var(--font-mono); font-size: 13.5px; line-height: var(--lh); }
+.gutter { padding: var(--pad) 10px var(--pad) 14px; overflow: hidden; text-align: right; color: var(--muted); background: var(--surface-2); border-right: 1px solid var(--line); user-select: none; }
+.gutter span { display: block; padding: 0 4px; border-radius: 4px; }
+.gutter .active { background: var(--accent); color: var(--accent-ink); }
+.gutter .failed { background: var(--danger); color: #fff; }
+.code { position: relative; overflow: hidden; }
+.marker { position: absolute; left: 0; right: 0; height: var(--lh); background: var(--accent-soft); pointer-events: none; }
+.marker.failed { background: color-mix(in srgb, var(--danger) 18%, transparent); }
+.marker[hidden] { display: none; }
+#editor {
+  position: relative; display: block; width: 100%; height: 100%; padding: var(--pad) 16px; resize: none;
+  border: 0; outline: 0; background: transparent; color: var(--text);
+  font: inherit; tab-size: 2; white-space: pre; overflow: auto;
+}
+
+.output { margin: 0; min-height: 120px; max-height: 300px; overflow: auto; font-family: var(--font-mono); font-size: 13px; line-height: 1.55; white-space: pre; }
+.output:empty::before { content: 'Det programmet skriver ut med print, havner her.'; color: var(--muted); font-family: var(--font-body); white-space: normal; }
+
+.bytecode { height: 250px; overflow-y: auto; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; }
+.bytecode li { display: grid; grid-template-columns: 38px 124px 1fr 34px; gap: 6px; padding: 0 8px; border-radius: 4px; }
+.bytecode li.hint { display: block; font-family: var(--font-body); font-size: 13.5px; padding: 0; }
+.bytecode .addr, .bytecode .src { color: var(--muted); }
+.bytecode .src { text-align: right; }
+.bytecode .arg { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--blue); }
+.bytecode li.current { background: var(--accent); color: var(--accent-ink); }
+.bytecode li.current span { color: inherit; }
+.bytecode li.same-line:not(.current) { background: var(--accent-soft); }
+
+.stack-view { display: flex; flex-wrap: wrap; gap: 6px; min-height: 30px; align-items: center; }
+.stack-view .slot { padding: 3px 9px; border: 1px solid var(--line-strong); border-radius: 6px; font-family: var(--font-mono); font-size: 12.5px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stack-view .slot:last-child { border-color: var(--accent); }
+.stack-view .top { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+
+.frames { display: grid; gap: 10px; max-height: 300px; overflow-y: auto; }
+.frame { border-left: 2px solid var(--line-strong); padding-left: 12px; }
+.frame:first-child { border-color: var(--accent); }
+.frame h3 { font-family: var(--font-mono); font-size: 13px; font-weight: 500; }
+.frame h3 small { color: var(--muted); font-weight: 400; margin-left: 8px; }
+.frame dl { display: grid; grid-template-columns: auto 1fr; gap: 1px 12px; margin-top: 4px; font-family: var(--font-mono); font-size: 12.5px; }
+.frame dt { color: var(--muted); }
+.frame dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.reference { margin-top: 16px; }
+.reference summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+.reference summary:hover { color: var(--text); }
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 28px; margin-top: 16px; }
+.ref-grid h3 { font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ref-grid p { font-size: 14px; line-height: 1.8; }
+.ref-grid code { font-family: var(--font-mono); font-size: 12.5px; padding: 1px 5px; border-radius: 4px; background: var(--surface-2); }
+
+#tour { margin-bottom: 18px; }
+#tour .tour-text { max-width: 78ch; }
+#tour .tour-status { min-height: 1.6em; }

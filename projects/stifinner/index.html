@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Stifinner: søkealgoritmer visualisert</title>
+  <meta name="description" content="Se A*, Dijkstra, bredde-først og dybde-først-søk lete seg gjennom labyrinter. Tegn vegger og terreng, og sammenlign algoritmene.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/stifinner/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/stifinner/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Stifinner: søkealgoritmer visualisert">
+  <meta property="og:description" content="Se A*, Dijkstra, bredde-først og dybde-først-søk lete seg gjennom labyrinter. Tegn vegger og terreng, og sammenlign algoritmene.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/stifinner.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="stifinner">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Algoritmer · Visualisering</p>
+      <h1>Stifinner</h1>
+      <p>Tegn vegger og gjørme i rutenettet, velg en algoritme og se hvordan den leter. Drar du start eller mål etter et søk, oppdateres ruten med en gang.</p>
+    </header>
+
+    <div class="controls">
+      <div class="field">
+        <span id="lbl-algo">Algoritme</span>
+        <div class="seg" role="radiogroup" aria-labelledby="lbl-algo" id="algorithm">
+          <label><input type="radio" name="algorithm" value="astar" checked><span>A*</span></label>
+          <label><input type="radio" name="algorithm" value="dijkstra"><span>Dijkstra</span></label>
+          <label><input type="radio" name="algorithm" value="bfs"><span>Bredde først</span></label>
+          <label><input type="radio" name="algorithm" value="greedy"><span>Grådig</span></label>
+          <label><input type="radio" name="algorithm" value="dfs"><span>Dybde først</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <span id="lbl-tool">Tegneverktøy</span>
+        <div class="seg" role="radiogroup" aria-labelledby="lbl-tool" id="tool">
+          <label><input type="radio" name="tool" value="1" checked><span>Vegg</span></label>
+          <label><input type="radio" name="tool" value="2"><span>Gjørme x5</span></label>
+          <label><input type="radio" name="tool" value="0"><span>Viskelær</span></label>
+        </div>
+      </div>
+      <label class="field speed">
+        <span class="field-row">Hastighet <output id="out-speed">Middels</output></span>
+        <input type="range" id="speed" min="1" max="5" step="1" value="3">
+      </label>
+    </div>
+
+    <div class="toolbar actions">
+      <button class="btn btn-primary" id="run" type="button">Start søk</button>
+      <button class="btn btn-ghost" id="maze" type="button">Labyrint</button>
+      <button class="btn btn-ghost" id="terrain" type="button">Tilfeldig terreng</button>
+      <button class="btn btn-ghost" id="clear-path" type="button">Fjern søk</button>
+      <button class="btn btn-ghost" id="clear-all" type="button">Tøm alt</button>
+    </div>
+
+    <p class="hint note" id="note" role="status" aria-live="polite"></p>
+
+    <div class="grid-wrap" id="grid-wrap">
+      <canvas id="grid" aria-label="Rutenett. Tegn med pekeren, og dra start- og målpunktet."></canvas>
+    </div>
+
+    <div class="below">
+      <div class="legend">
+        <span><i class="sw sw-start"></i>Start</span>
+        <span><i class="sw sw-goal"></i>Mål</span>
+        <span><i class="sw sw-wall"></i>Vegg</span>
+        <span><i class="sw sw-mud"></i>Gjørme (koster 5)</span>
+        <span><i class="sw sw-visited"></i>Utforsket</span>
+        <span><i class="sw sw-path"></i>Sti</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><p class="stat-label">Utforsket</p><p class="stat-value" id="stat-visited">-</p></div>
+        <div class="stat"><p class="stat-label">Stilengde</p><p class="stat-value" id="stat-length">-</p></div>
+        <div class="stat"><p class="stat-label">Kostnad</p><p class="stat-value" id="stat-cost">-</p></div>
+        <div class="stat"><p class="stat-label">Regnetid</p><p class="stat-value" id="stat-time">-</p></div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

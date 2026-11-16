@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Selvtest: testene kjøres i nettleseren din</title>
+  <meta name="description" content="Testene for prosjektene i porteføljen, kjørt akkurat nå i nettleseren din med nye tilfeldige scenarier.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/tester/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/tester/">
+  <link rel="icon" href="../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <link rel="preload" href="../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/base.css">
+  <link rel="stylesheet" href="../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../assets/js/theme-init.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#app">Hopp til testene</a>
+  <header class="app-bar">
+    <a class="app-back" href="../#prosjekter" aria-label="Tilbake til porteføljen"><span class="arrow" aria-hidden="true">←</span><span>Portefølje</span></a>
+    <p class="app-name">Selvtest</p>
+    <div class="app-bar-actions"><button class="icon-btn" id="theme-toggle" type="button"></button></div>
+  </header>
+
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Testene, kjørt hos deg</p>
+      <h1>Selvtest</h1>
+      <p>Prosjektene her har tester, og på denne siden kjører de i nettleseren din, mot den samme koden som appene bruker. De tilfeldige scenariene er nye hver gang siden lastes.</p>
+    </header>
+
+    <section class="panel summary" aria-live="polite">
+      <div>
+        <p class="eyebrow" id="summary-label">Kjører...</p>
+        <p class="summary-main" id="summary-main">0 av 6</p>
+        <p class="summary-sub" id="summary-sub"></p>
+      </div>
+      <button class="btn btn-ghost" id="again" type="button" disabled>Kjør på nytt med nye frø</button>
+    </section>
+
+    <ol class="suites" id="suites"></ol>
+
+    <p class="hint attribution">
+      De samme testene kjøres fra kommandolinjen med flere scenarier (for eksempel 20 000 regex-mønstre og 5 000 CRDT-forløp). Strømsmart og SQL-lab testes også, men utenfor nettleseren: de trenger Python og PostgreSQL.
+    </p>
+  </main>
+</body>
+</html>

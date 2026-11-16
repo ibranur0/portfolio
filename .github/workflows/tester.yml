@@ -1,0 +1,44 @@
+# Kjører alle testene ved hver push og pull request.
+name: Tester
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tester:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Raft (scenarier, kaosfrø og mutasjonstest)
+        run: node projects/raft/test.mjs 3000
+      - name: Kvist (parser, kompilator og virtuell maskin)
+        run: node projects/kvist/test.mjs
+      - name: Regex (differensiell test mot V8 og lineær kjøretid)
+        run: node projects/regex/test.mjs
+      - name: Samskriv (konvergens)
+        run: node projects/samskriv/test.mjs
+      - name: Bro (referanseløsninger og fysikk)
+        run: node projects/bro/test.mjs
+      - name: Robot (referanseprogrammer og regler)
+        run: node projects/robot/test.mjs
+      - name: Nevralt (gradientkontroll)
+        run: node projects/nevralt/test.mjs
+      - name: Sjakk (perft fra utgangsstillingen)
+        run: |
+          node -e "import('./projects/sjakk/engine.js').then(({ Engine }) => { const n = new Engine().perft(5); console.log('perft(5) =', n); if (n !== 4865609) process.exit(1); })"
+      - name: Strømsmart (Python)
+        run: python -m unittest test_stromsmart
+        working-directory: projects/stromsmart
+      - name: SQL-lab (alle eksemplene mot PostgreSQL)
+        run: |
+          npm install --no-save --no-audit --no-fund @electric-sql/pglite@0.5.16
+          node projects/sql-lab/test.mjs

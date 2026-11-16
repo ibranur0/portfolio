@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Raft: konsensus i en klynge som feiler</title>
+  <meta name="description" content="En guidet, interaktiv simulering av Raft-konsensus. Krasj noder, del nettverket og se fem servere bli enige igjen.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/raft/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/raft/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Raft: konsensus i en klynge som feiler">
+  <meta property="og:description" content="En guidet, interaktiv simulering av Raft-konsensus. Krasj noder, del nettverket og se fem servere bli enige igjen.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/raft.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="raft">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Distribuerte systemer</p>
+      <h1>Raft</h1>
+      <p>Hvordan kan fem servere bli enige om hva som er lagret, når hvem som helst av dem kan krasje? Omvisningen tar deg gjennom svaret på et par minutter. Etterpå kan du prøve å ødelegge klyngen selv.</p>
+    </header>
+
+    <div class="raft" id="raft">
+      <section class="panel cluster-panel" aria-label="Klyngen">
+        <div class="bar">
+          <span class="badge ok" id="invariants">Sikkerhetsegenskapene holder</span>
+          <span class="hint" id="counters"></span>
+        </div>
+        <svg id="cluster" viewBox="0 0 520 464" role="group" aria-label="Nodene i klyngen og meldingene mellom dem"></svg>
+        <div class="legend">
+          <span><i class="lg lg-leader"></i>Leder</span>
+          <span><i class="lg lg-candidate"></i>Kandidat</span>
+          <span><i class="lg lg-follower"></i>Følger</span>
+          <span><i class="lg lg-append"></i>Loggmelding</span>
+          <span><i class="lg lg-vote"></i>Stemme</span>
+          <span><i class="lg lg-reply"></i>Svar</span>
+        </div>
+        <div class="toolbar transport">
+          <button class="btn btn-ghost btn-small" id="play" type="button">Pause</button>
+          <div class="seg" role="radiogroup" aria-label="Hastighet" id="speed">
+            <label><input type="radio" name="speed" value="0.25"><span>Sakte</span></label>
+            <label><input type="radio" name="speed" value="1" checked><span>Normal</span></label>
+            <label><input type="radio" name="speed" value="4"><span>Rask</span></label>
+          </div>
+          <label class="size">Noder
+            <select class="select" id="size"><option>3</option><option selected>5</option><option>7</option></select>
+          </label>
+          <button class="btn btn-ghost btn-small" id="restart" type="button">Start forfra</button>
+        </div>
+      </section>
+
+      <aside class="stack side">
+        <section class="panel tour" id="tour" aria-label="Omvisning"></section>
+
+        <section class="panel stack">
+          <h2 class="panel-title">Fri lek</h2>
+          <div class="toolbar">
+            <button class="btn btn-ghost btn-small" id="write" type="button">Send kommando</button>
+            <button class="btn btn-ghost btn-small" id="split" type="button">Del nettverket i to</button>
+            <button class="btn btn-ghost btn-small" id="heal" type="button">Reparer alt</button>
+          </div>
+          <label class="field">
+            <span class="field-row">Pakketap <output id="out-drop">0 %</output></span>
+            <input type="range" id="drop" min="0" max="50" step="5" value="0">
+          </label>
+          <div class="selected" id="selected"></div>
+        </section>
+      </aside>
+
+      <section class="panel logs-panel" aria-labelledby="h-logs">
+        <h2 class="panel-title" id="h-logs">Loggene. Heltrukket ramme betyr bekreftet av et flertall.</h2>
+        <div class="logs" id="logs"></div>
+      </section>
+
+      <section class="panel events-panel" aria-labelledby="h-events">
+        <h2 class="panel-title" id="h-events">Hendelser</h2>
+        <ol class="events" id="events" aria-live="off"></ol>
+      </section>
+    </div>
+
+    <p class="hint attribution">
+      Algoritmen ligger i <code>raft.js</code>. Testene i <code>test.mjs</code> har kjørt 20&nbsp;000 tilfeldige feilscenarier og kontrollerer de samme sikkerhetsegenskapene som merket øverst viser.
+    </p>
+  </main>
+</body>
+</html>

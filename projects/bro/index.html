@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Bro: bygg en bru som holder</title>
+  <meta name="description" content="Et brubyggespill med egen fysikkmotor. Bygg et fagverk av vei, tre og stål, send en lastebil over, og se hvor kreftene går før noe ryker.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/bro/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/bro/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Bro: bygg en bru som holder">
+  <meta property="og:description" content="Et brubyggespill med egen fysikkmotor. Bygg et fagverk av vei, tre og stål, send en lastebil over, og se hvor kreftene går før noe ryker.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/bro.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="bro">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Spill · Fysikkmotor</p>
+      <h1>Bro</h1>
+      <p>Bygg en bru som tåler trafikken, for minst mulig penger. Trekanter holder, firkanter klapper sammen. Under testen ser du belastningen i hver bjelke, helt til noe ryker.</p>
+    </header>
+
+    <div class="levels" id="levels" role="group" aria-label="Nivå"></div>
+
+    <section class="panel board" aria-label="Byggeplassen">
+      <div class="board-head">
+        <div>
+          <h2 class="level-name" id="level-name"></h2>
+          <p class="level-text" id="level-text"></p>
+        </div>
+        <div class="price">
+          <p class="spent"><span id="spent">0 kr</span> <small>brukt</small></p>
+          <div class="meter" aria-hidden="true"><i id="meter"></i><b id="tick-3"></b><b id="tick-2"></b><b id="tick-1"></b></div>
+          <ol class="goals" id="goals" aria-label="Prisgrenser for stjerner"></ol>
+        </div>
+      </div>
+
+      <div class="toolbar tools">
+        <div class="seg" role="radiogroup" aria-label="Materiale" id="tool">
+          <label title="Tast 1"><input type="radio" name="tool" value="road" checked><span><i class="sw sw-road"></i>Vei <small>200 kr/m</small></span></label>
+          <label title="Tast 2"><input type="radio" name="tool" value="wood"><span><i class="sw sw-wood"></i>Tre <small>90 kr/m</small></span></label>
+          <label title="Tast 3"><input type="radio" name="tool" value="steel"><span><i class="sw sw-steel"></i>Stål <small>260 kr/m</small></span></label>
+          <label title="Tast 4"><input type="radio" name="tool" value="erase"><span>Viskelær</span></label>
+        </div>
+        <button class="btn btn-ghost btn-small" id="undo" type="button" title="Ctrl+Z">Angre</button>
+        <button class="btn btn-ghost btn-small" id="clear" type="button">Start nivået på nytt</button>
+        <label class="fast"><input type="checkbox" id="fast"> <span>Dobbel fart</span></label>
+        <button class="btn btn-primary test" id="test" type="button" title="Mellomrom">Test brua</button>
+      </div>
+
+      <div class="stage" id="stage">
+        <canvas id="canvas" aria-label="Byggeplassen. Dra fra et knutepunkt til et annet for å legge en bjelke."></canvas>
+        <p class="toast" id="note" role="status" aria-live="polite" hidden></p>
+        <div class="result" id="result" hidden role="status" aria-live="polite">
+          <p class="result-stars" id="result-stars" aria-hidden="true"></p>
+          <h3 id="result-title"></h3>
+          <p id="result-text"></p>
+          <div class="toolbar">
+            <button class="btn btn-primary btn-small" id="result-next" type="button">Neste nivå</button>
+            <button class="btn btn-ghost btn-small" id="result-back" type="button">Bygg videre</button>
+          </div>
+        </div>
+      </div>
+      <div class="legend stress-legend" id="stress-legend" hidden>
+        <span><i class="lg-ok"></i>Lite belastet</span>
+        <span><i class="lg-mid"></i>Anstrengt</span>
+        <span><i class="lg-hot"></i>Like før brudd</span>
+      </div>
+    </section>
+
+    <div class="stats">
+      <div class="stat"><p class="stat-label">Bjelker</p><p class="stat-value" id="s-beams">0</p></div>
+      <div class="stat"><p class="stat-label">Høyeste belastning</p><p class="stat-value" id="s-stress">-</p></div>
+      <div class="stat"><p class="stat-label">Bjelker som røk</p><p class="stat-value" id="s-broken">-</p></div>
+      <div class="stat"><p class="stat-label">Stjerner totalt</p><p class="stat-value" id="s-stars">0 / 15</p></div>
+    </div>
+
+    <p class="hint attribution">
+      Snarveier: <kbd>1</kbd>-<kbd>4</kbd> velger materiale, <kbd>Mellomrom</kbd> tester brua, <kbd>Ctrl</kbd> + <kbd>Z</kbd> angrer, og høyreklikk fjerner en bjelke. Drar du over en bjelke som finnes, byttes materialet.
+    </p>
+  </main>
+</body>
+</html>

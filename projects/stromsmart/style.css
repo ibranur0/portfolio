@@ -1,0 +1,56 @@
+.state { padding: 18px 20px; border: 1px dashed var(--line-strong); border-radius: var(--radius-m); color: var(--muted); }
+.state.error { border-color: var(--danger); color: var(--text); }
+
+.answer-main { font-family: var(--font-display); font-size: clamp(40px, 6.4vw, 68px); line-height: 1.05; letter-spacing: -.015em; margin-top: 8px; }
+.answer-sub { margin-top: 10px; color: var(--muted); max-width: 60ch; }
+.answer-sub strong { color: var(--text); font-weight: 500; }
+.answer.waiting .answer-main { color: var(--muted); }
+/* På mobil går svaret over to linjer. Plassen settes av på forhånd så teksten under ikke hopper. */
+@media (max-width: 640px) { .answer-main { min-height: 2.1em; } }
+.answer.error .answer-sub { color: var(--text); }
+
+.chart { position: relative; width: 100%; margin-bottom: 12px; }
+/* Samme høyde som diagrammet, så ingenting flytter seg når prisene kommer. */
+.chart:empty { height: 250px; }
+.chart svg { display: block; width: 100%; height: auto; touch-action: pan-y; cursor: crosshair; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-label { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.c-label-strong { fill: var(--text); }
+.c-day { stroke: var(--line-strong); stroke-width: 1; stroke-dasharray: 2 4; }
+.c-bar { fill: var(--line-strong); }
+.c-bar.chosen { fill: var(--accent); }
+.c-bar.past { fill: var(--line); }
+.c-now { stroke: var(--text); stroke-width: 1.5; }
+.c-now-label { fill: var(--text); font-family: var(--font-mono); font-size: 10.5px; }
+.c-hover { fill: var(--text); opacity: .08; pointer-events: none; }
+.chart-tip {
+  position: absolute; z-index: 5; top: 0; transform: translate(-50%, -6px); pointer-events: none;
+  display: grid; justify-items: center; padding: 6px 10px; white-space: nowrap;
+  border: 1px solid var(--line-strong); border-radius: 8px; background: var(--bg); box-shadow: var(--shadow); font-size: 13px;
+}
+.chart-tip[hidden] { display: none; }
+.chart-tip span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.sw-chosen { background: var(--accent); }
+.sw-other { background: var(--line-strong); }
+.sw-past { background: var(--line); }
+
+.presets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.preset {
+  padding: 10px 12px; text-align: left; border: 1px solid var(--line); border-radius: var(--radius-m);
+  background: transparent; font-size: 14px; transition: border-color .2s, background-color .2s;
+}
+.preset small { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 2px; }
+.preset:hover { border-color: var(--line-strong); }
+.preset[aria-pressed='true'] { border-color: var(--accent); background: var(--accent-soft); }
+
+.check { display: flex; align-items: center; gap: 10px; font-size: 14.5px; cursor: pointer; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+.controls hr { width: 100%; border: 0; border-top: 1px solid var(--line); margin: 4px 0; }
+.controls .field .input:disabled { opacity: .4; }
+
+.source summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+.source summary:hover { color: var(--text); }
+.source pre { margin: 14px 0 0; max-height: 440px; overflow: auto; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.65; tab-size: 4; white-space: pre; }
+
+.attribution { margin-top: 20px; }
+.attribution a { text-decoration: underline; text-underline-offset: 3px; }

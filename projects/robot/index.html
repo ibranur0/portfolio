@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Robot: programmer deg gjennom labyrinten</title>
+  <meta name="description" content="Et programmeringsspill der roboten styres med Kvist, et språk med egen kompilator og virtuell maskin. Sju nivåer, fra tre kommandoer til en algoritme som løser enhver labyrint.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/robot/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/robot/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Robot: programmer deg gjennom labyrinten">
+  <meta property="og:description" content="Et programmeringsspill der roboten styres med Kvist, et språk med egen kompilator og virtuell maskin. Sju nivåer, fra tre kommandoer til en algoritme som løser enhver labyrint.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/robot.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="robot">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Spill · Programmering</p>
+      <h1>Robot</h1>
+      <p>Skriv et program som får roboten til målet. Språket er <a class="inline" href="../kvist/">Kvist</a>, som jeg har laget selv: koden din kompileres til bytekode og kjøres i den samme virtuelle maskinen. De siste nivåene har flere baner, og da holder det ikke å telle ruter.</p>
+    </header>
+
+    <div class="levels" id="levels" role="group" aria-label="Nivå"></div>
+
+    <div class="game">
+      <section class="panel side" aria-label="Programmet">
+        <div>
+          <h2 class="level-name" id="level-name"></h2>
+          <p class="level-text" id="level-text"></p>
+        </div>
+
+        <div class="editor">
+          <div class="gutter" id="gutter" aria-hidden="true"></div>
+          <div class="code">
+            <div class="marker" id="marker" hidden></div>
+            <label class="sr-only" for="editor">Programmet som styrer roboten</label>
+            <textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" wrap="off"></textarea>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <button class="btn btn-primary" id="run" type="button">Kjør</button>
+          <button class="btn btn-ghost" id="step" type="button" title="Utfør en kommando om gangen">Steg</button>
+          <button class="btn btn-ghost" id="reset" type="button">Nullstill</button>
+          <label class="speed"><span>Fart</span><input type="range" id="speed" min="1" max="4" step="1" value="2" aria-label="Fart"></label>
+        </div>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+
+        <div class="palette">
+          <p class="eyebrow">Sett inn</p>
+          <div class="chips" id="palette"></div>
+        </div>
+      </section>
+
+      <section class="panel board" aria-label="Banen">
+        <div class="board-head">
+          <div class="maps" id="maps" role="group" aria-label="Bane"></div>
+          <dl class="gauges">
+            <div><dt>Størrelse</dt><dd id="size">-</dd></div>
+            <div><dt>Batteri</dt><dd id="battery">-</dd></div>
+            <div><dt>Krystaller</dt><dd id="crystals">-</dd></div>
+          </dl>
+        </div>
+        <div class="stage" id="stage">
+          <canvas id="canvas" aria-label="Banen sett ovenfra, med roboten, veggene, krystallene og målet"></canvas>
+          <div class="result" id="result" hidden role="status" aria-live="polite">
+            <p class="result-stars" id="result-stars" aria-hidden="true"></p>
+            <h3 id="result-title"></h3>
+            <p id="result-text"></p>
+            <div class="toolbar">
+              <button class="btn btn-primary btn-small" id="result-next" type="button">Neste nivå</button>
+              <button class="btn btn-ghost btn-small" id="result-back" type="button">Prøv igjen</button>
+            </div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i class="lg lg-robot"></i>Roboten</span>
+          <span><i class="lg lg-crystal"></i>Krystall</span>
+          <span><i class="lg lg-goal"></i>Mål</span>
+          <span><i class="lg lg-trail"></i>Der den har vært</span>
+        </div>
+      </section>
+    </div>
+
+    <p class="hint attribution">
+      Spillreglene og banene ligger i <code>robot.js</code>. Programmet ditt kjøres av kompilatoren og maskinen fra <a class="inline" href="../kvist/">Kvist</a>, som spillet har gitt noen ekstra funksjoner. Testene i <code>test.mjs</code> løser hvert nivå med et referanseprogram og kontrollerer at snarveiene ikke holder.
+    </p>
+  </main>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; connect-src 'self' https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Samskriv: samtidig redigering uten server</title>
+  <meta name="description" content="En tekst-CRDT skrevet fra bunnen av. Tre redaktører skriver i samme tekst, også frakoblet, og ender alltid med nøyaktig samme resultat.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/samskriv/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/samskriv/">
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Samskriv: samtidig redigering uten server">
+  <meta property="og:description" content="En tekst-CRDT skrevet fra bunnen av. Tre redaktører skriver i samme tekst, også frakoblet, og ender alltid med nøyaktig samme resultat.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/samskriv.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="samskriv">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Distribuerte systemer · CRDT</p>
+      <h1>Samskriv</h1>
+      <p>Ada, Bo og Cleo skriver i samme tekst, hver på sin maskin. Ingen server bestemmer rekkefølgen, meldingene bruker tid på å komme frem, og hvem som helst kan være frakoblet. Likevel ender alle tre alltid med nøyaktig samme tekst. Skriv i feltene selv, eller se et eksempel først.</p>
+    </header>
+
+    <div class="stack">
+      <section class="panel story-panel" aria-label="Eksempel">
+        <div class="bar">
+          <span class="badge" id="badge">Alle tre har samme tekst</span>
+          <div class="toolbar">
+            <button class="btn btn-primary btn-small" id="demo" type="button">Vis et eksempel</button>
+            <button class="btn btn-ghost btn-small" id="reset" type="button">Start forfra</button>
+          </div>
+        </div>
+        <p class="story" id="story" role="status" aria-live="polite"></p>
+      </section>
+
+      <div class="editors" id="editors"></div>
+
+      <div class="lower">
+        <section class="panel" aria-labelledby="h-net">
+          <h2 class="panel-title" id="h-net">Nettverket</h2>
+          <svg id="network" viewBox="0 0 320 214" role="group" aria-label="De tre kopiene og endringene som er på vei mellom dem"></svg>
+          <label class="field">
+            <span class="field-row">Forsinkelse <output id="out-delay">0,8 s</output></span>
+            <input type="range" id="delay" min="0.1" max="3" step="0.1" value="0.8">
+          </label>
+          <p class="hint">Hver prikk er ett tegn som er satt inn eller slettet. Meldingene kommer ikke nødvendigvis frem i den rekkefølgen de ble sendt.</p>
+        </section>
+
+        <section class="panel explain" aria-labelledby="h-how">
+          <h2 class="panel-title" id="h-how">Slik virker det</h2>
+          <ol class="how">
+            <li><strong>Hvert tegn har en id.</strong> Id-en er en teller og navnet på den som skrev tegnet. Stripen under hvert tekstfelt viser tegnene med fargen til forfatteren.</li>
+            <li><strong>Tegn husker naboen sin.</strong> En innsetting sier ikke "posisjon 5", men "rett etter dette tegnet". Det betyr det samme hos alle, uansett hva annet som har skjedd i teksten.</li>
+            <li><strong>Samtidig på samme sted.</strong> Setter to inn etter samme tegn samtidig, havner tegnet med høyest id først. Alle bruker samme regel og får samme rekkefølge.</li>
+            <li><strong>Slettede tegn blir liggende.</strong> De skjules, men finnes fortsatt (gjennomstreket i stripen). En forsinket innsetting finner derfor alltid tegnet den skulle stå etter.</li>
+          </ol>
+          <p class="hint">Algoritmen ligger i <code>crdt.js</code>. Testene i <code>test.mjs</code> kjører 5&nbsp;000 tilfeldige forløp med omstokkede, forsinkede og dupliserte meldinger, og krever at alle kopiene ender helt likt.</p>
+        </section>
+      </div>
+
+      <section class="panel stack live" id="live" aria-labelledby="h-live">
+        <div class="bar">
+          <div>
+            <h2 class="panel-title" id="h-live">På ordentlig: mellom faner</h2>
+            <p class="hint lead">Over er nettverket simulert. Her er det ekte: åpne siden i en fane til, legg vinduene side om side og skriv i begge. Hver fane er sin egen kopi med sin egen id, og endringene sendes mellom dem som operasjoner, uten server.</p>
+          </div>
+          <span class="badge" id="live-peers">Ingen andre faner åpne</span>
+        </div>
+        <textarea class="input" id="live-text" rows="3" maxlength="400" spellcheck="false" autocomplete="off" aria-label="Tekst som deles mellom fanene" placeholder="Skriv noe her, og se det dukke opp i den andre fanen."></textarea>
+        <div class="strip" id="live-strip" aria-hidden="true"></div>
+        <div class="toolbar">
+          <a class="btn btn-primary btn-small" href="./#live" target="_blank" rel="noopener">Åpne en fane til ↗</a>
+          <button class="btn btn-ghost btn-small" id="live-toggle" type="button" aria-pressed="false">Koble fra denne fanen</button>
+          <button class="btn btn-ghost btn-small" id="live-clear" type="button">Tøm teksten</button>
+          <span class="hint" id="live-state"></span>
+        </div>
+      </section>
+    </div>
+  </main>
+</body>
+</html>

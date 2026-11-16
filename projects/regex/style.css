@@ -1,0 +1,88 @@
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px;
+  border: 1px solid var(--line); border-radius: 999px; background: transparent;
+  font-size: 14px; color: var(--muted); transition: all .2s var(--ease);
+}
+.chip:hover { color: var(--text); border-color: var(--line-strong); }
+.chip[aria-pressed='true'] { background: var(--text); border-color: var(--text); color: var(--bg); }
+
+.pattern-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.slash { font-family: var(--font-display); font-size: 34px; line-height: 1; color: var(--muted); }
+#pattern, #text { font-family: var(--font-mono); font-size: 15px; }
+#pattern { min-height: 50px; }
+#text { display: block; padding: 12px 14px; line-height: 1.6; resize: vertical; min-height: 96px; }
+
+.status { min-height: 1.6em; font-size: 14.5px; color: var(--muted); }
+.status strong { color: var(--text); font-weight: 500; }
+.status.error strong { color: var(--danger); font-weight: 600; }
+.where { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 13.5px; white-space: pre-wrap; overflow-wrap: anywhere; color: var(--text); }
+.where mark { background: var(--danger); color: #fff; border-radius: 3px; padding: 0 1px; }
+
+.matches {
+  margin: 0; padding: 12px 14px; min-height: 48px; max-height: 260px; overflow: auto;
+  border: 1px dashed var(--line-strong); border-radius: var(--radius-m);
+  font-family: var(--font-mono); font-size: 15px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.matches mark { background: var(--accent); color: var(--accent-ink); border-radius: 4px; padding: 2px 1px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+.matches .more { color: var(--muted); }
+
+.lead { max-width: 84ch; margin-bottom: 14px; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; }
+
+/* ---------- Automaten ---------- */
+.diagram-scroll { overflow-x: auto; padding: 10px 0 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+#diagram { max-width: none; margin: 0 auto; }
+.track { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.arrow-head { fill: var(--muted); }
+.pill { fill: var(--surface-2); stroke: var(--line-strong); stroke-width: 1.5; transition: fill .15s, stroke .15s; }
+.pill-text { fill: var(--text); font-family: var(--font-mono); font-size: 12.5px; text-anchor: middle; transition: fill .15s; }
+.leaf.active .pill { fill: var(--accent); stroke: var(--accent); }
+.leaf.active .pill-text { fill: var(--accent-ink); }
+.assert { fill: none; stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.assert-text { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; text-anchor: middle; }
+.count { fill: var(--muted); font-family: var(--font-mono); font-size: 10.5px; text-anchor: middle; }
+.start-dot { fill: var(--accent); }
+.end-ring { fill: none; stroke: var(--line-strong); stroke-width: 1.5; transition: stroke .15s; }
+.end-dot { fill: var(--line-strong); transition: fill .15s; }
+.end.matched .end-ring { stroke: var(--yellow); stroke-width: 2.5; }
+.end.matched .end-dot { fill: var(--yellow); }
+
+.tape-wrap { position: relative; overflow-x: auto; margin-top: 16px; padding-bottom: 6px; }
+.tape { display: inline-flex; gap: 2px; font-family: var(--font-mono); font-size: 16px; }
+.tape span { flex: none; display: grid; place-items: center; min-width: 22px; height: 34px; padding: 0 3px; border-radius: 5px; border: 1px solid var(--line); background: var(--surface-2); }
+.tape .read { color: var(--muted); background: transparent; }
+.tape .next { border-color: var(--accent); background: var(--accent-soft); }
+.tape .end-of-text { font-size: 11px; padding: 0 8px; color: var(--muted); }
+.stepper { margin-top: 12px; }
+.position { flex: 1 1 160px; display: flex; }
+.step-note { margin-top: 12px; min-height: 3.2em; font-size: 14.5px; color: var(--muted); }
+
+/* ---------- Kappløp ---------- */
+#evil span { font-family: var(--font-mono); font-size: 13px; }
+#chart { width: 100%; height: auto; }
+.c-grid { stroke: var(--line); stroke-width: 1; }
+.c-limit { stroke: var(--danger); stroke-width: 1; stroke-dasharray: 4 5; opacity: .8; }
+.c-label { fill: var(--muted); font-family: var(--font-mono); font-size: 11px; }
+.c-line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.c-line.native, .c-dot.native { stroke: var(--rose); }
+.c-line.mine, .c-dot.mine { stroke: var(--accent); }
+.c-dot { stroke-width: 0; }
+.c-dot.native { fill: var(--rose); }
+.c-dot.mine { fill: var(--accent); }
+.c-timeout { fill: var(--surface); stroke: var(--danger); stroke-width: 2.5; }
+.sw-native { background: var(--rose); }
+.sw-mine { background: var(--accent); }
+.race-note { min-height: 3.2em; font-size: 15px; color: var(--muted); max-width: 84ch; }
+.race-note strong { color: var(--text); font-weight: 500; }
+
+/* ---------- Referanse ---------- */
+.reference summary { cursor: pointer; color: var(--muted); font-size: 14px; }
+.reference summary:hover { color: var(--text); }
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 28px; margin-top: 16px; }
+.ref-grid h3 { font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.ref-grid p { font-size: 14px; line-height: 1.8; }
+.ref-grid code, .attribution code { font-family: var(--font-mono); font-size: 12.5px; }
+.ref-grid code { padding: 1px 5px; border-radius: 4px; background: var(--surface-2); }
+
+.attribution { margin-top: 20px; max-width: 84ch; }

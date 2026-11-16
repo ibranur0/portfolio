@@ -1,0 +1,71 @@
+.status { font-family: var(--font-display); font-size: clamp(24px, 3.6vw, 32px); margin-bottom: 14px; min-height: 1.3em; }
+
+.board-row { display: flex; gap: 10px; align-items: stretch; max-width: 640px; }
+.evalbar { position: relative; width: 12px; flex: none; border-radius: 6px; overflow: hidden; background: #24231f; border: 1px solid var(--line-strong); }
+.evalbar-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 50%; background: #f1eee4; transition: height .5s var(--ease); }
+.evalbar.flipped .evalbar-fill { bottom: auto; top: 0; }
+
+.board-wrap { position: relative; flex: 1; min-width: 0; }
+.board {
+  --light: #e9ecd9; --dark: #6d9460;
+  display: grid; grid-template-columns: repeat(8, 1fr); aspect-ratio: 1;
+  border-radius: var(--radius-s); overflow: hidden; border: 1px solid var(--line-strong);
+  user-select: none; -webkit-user-select: none;
+}
+.sq {
+  position: relative; display: grid; place-items: center; padding: 0; border: 0; border-radius: 0;
+  background: var(--light); container-type: size; cursor: default;
+}
+.sq.dark { background: var(--dark); }
+.sq.movable, .sq.target { cursor: pointer; }
+.sq.movable { cursor: grab; touch-action: none; } /* brikken kan dras, så feltet skal ikke rulle siden */
+.sq.lifted .piece { opacity: .25; }
+.piece.ghost { position: fixed; z-index: 60; transform: translate(-50%, -50%); pointer-events: none; -webkit-text-stroke-width: .05em; filter: drop-shadow(0 6px 10px rgba(0, 0, 0, .35)); }
+.sq:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; z-index: 2; }
+
+/* Brikkene er Unicode-tegn med farge og kontur, så hvit og svart synes på begge feltfarger */
+.piece {
+  font-family: 'Segoe UI Symbol', 'Noto Sans Symbols2', 'Apple Symbols', 'DejaVu Sans', sans-serif;
+  font-size: 78cqw; line-height: 1; pointer-events: none;
+  paint-order: stroke fill; -webkit-text-stroke: 5cqw #1c1a17; color: #f7f3e8;
+}
+.piece.black { color: #23211d; -webkit-text-stroke: 4cqw #f1ecde; }
+.sq.arrived .piece { animation: arrive .22s var(--ease); }
+@keyframes arrive { from { transform: scale(.72); } }
+
+.sq.last::before { content: ''; position: absolute; inset: 0; background: rgba(250, 226, 92, .5); }
+.sq.selected::before { content: ''; position: absolute; inset: 0; background: rgba(250, 214, 60, .82); }
+.sq.check::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle, rgba(226, 48, 48, .9) 20%, transparent 72%); }
+.sq.target::after { content: ''; position: absolute; width: 28%; height: 28%; border-radius: 50%; background: rgba(20, 18, 14, .32); }
+.sq.target.occupied::after { width: 86%; height: 86%; background: none; border: 7cqw solid rgba(20, 18, 14, .32); box-sizing: border-box; }
+.piece { position: relative; z-index: 1; }
+
+/* Koordinater i hjørnene */
+.coord { position: absolute; font-family: var(--font-mono); font-size: 15cqw; font-weight: 600; color: var(--dark); pointer-events: none; z-index: 1; }
+.sq.dark .coord { color: var(--light); }
+.coord-file { right: 5cqw; bottom: 2cqw; }
+.coord-rank { left: 5cqw; top: 3cqw; }
+
+.promo {
+  position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; grid-auto-flow: column; gap: 10px;
+  background: rgba(10, 10, 8, .6); backdrop-filter: blur(2px);
+}
+.promo[hidden] { display: none; }
+.promo button { width: clamp(52px, 12vw, 76px); aspect-ratio: 1; border: 1px solid var(--line-strong); border-radius: var(--radius-m); background: var(--surface); container-type: size; display: grid; place-items: center; }
+.promo button:hover { border-color: var(--accent); }
+
+.board-actions { margin-top: 16px; }
+
+.pv { margin-top: 14px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.7; color: var(--muted); min-height: 3.4em; overflow-wrap: anywhere; }
+.pv strong { color: var(--text); font-weight: 500; }
+
+.moves { display: grid; grid-template-columns: 2.2em 1fr 1fr; gap: 2px 8px; max-height: 220px; overflow-y: auto; font-family: var(--font-mono); font-size: 13.5px; font-variant-numeric: tabular-nums; }
+.moves .num { color: var(--muted); }
+.moves .ply.current { color: var(--accent); }
+#moves-empty[hidden] { display: none; }
+
+.fen summary { padding-block: 7px; cursor: pointer; font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.fen[open] summary { margin-bottom: 12px; }
+.fen .input { font-family: var(--font-mono); font-size: 12px; margin-bottom: 10px; }
+.fen .hint { margin-top: 8px; min-height: 1.4em; }
+.piece.ghost.black { -webkit-text-stroke-width: .04em; }

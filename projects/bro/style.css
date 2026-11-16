@@ -1,0 +1,91 @@
+.levels { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.level {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 42px; padding: 0 16px;
+  border: 1px solid var(--line); border-radius: 999px; background: transparent;
+  font-size: 14.5px; color: var(--muted); transition: all .2s var(--ease);
+}
+.level:hover { color: var(--text); border-color: var(--line-strong); }
+.level[aria-pressed='true'] { background: var(--text); border-color: var(--text); color: var(--bg); }
+.level .num { font-family: var(--font-mono); font-size: 11px; }
+.level .won { font-size: 12px; letter-spacing: 1px; color: var(--accent); }
+.level[aria-pressed='true'] .won { color: inherit; }
+
+.board { display: grid; gap: 14px; scroll-margin-top: 72px; }
+.board-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(250px, 320px); gap: 14px 32px; align-items: start; }
+@media (max-width: 760px) { .board-head { grid-template-columns: minmax(0, 1fr); } }
+.level-name { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4vw, 42px); line-height: 1.05; }
+.level-text { margin-top: 8px; max-width: 68ch; color: var(--muted); font-size: 15px; }
+
+/* Pris: hva du har brukt, en måler, og prisgrensene for stjernene under den */
+.spent { font-family: var(--font-display); font-size: 34px; line-height: 1; font-variant-numeric: tabular-nums; }
+.spent small { font-family: var(--font-body); font-size: 14px; color: var(--muted); }
+.spent.over #spent { color: var(--danger); }
+.meter { position: relative; height: 8px; margin-top: 12px; border-radius: 4px; background: var(--surface-2); }
+.meter i { position: absolute; inset: 0 auto 0 0; width: 0; border-radius: 4px; background: var(--accent); transition: width .25s var(--ease), background-color .25s; }
+.meter i.two { background: var(--yellow); }
+.meter i.one { background: color-mix(in srgb, var(--yellow) 55%, var(--danger)); }
+.meter i.over { background: var(--danger); }
+.meter b { position: absolute; top: -3px; width: 2px; height: 14px; margin-left: -1px; border-radius: 1px; background: var(--text); opacity: .55; }
+.goals { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); }
+.goals li { display: grid; gap: 1px; white-space: nowrap; }
+.goals li:nth-child(2) { text-align: center; }
+.goals li:last-child { text-align: right; }
+.goals .stars { letter-spacing: 1px; color: var(--line-strong); }
+.goals .stars small { font-size: 10.5px; letter-spacing: 0; color: var(--muted); }
+.goals .reached { color: var(--text); }
+.goals .reached .stars { color: var(--accent); }
+
+.tools { gap: 8px 10px; }
+.tools .seg span { display: inline-flex; align-items: center; gap: 7px; }
+.tools .seg small { font-family: var(--font-mono); font-size: 10.5px; }
+.sw { width: 14px; height: 4px; border-radius: 2px; }
+.sw-road { background: currentColor; height: 6px; }
+.sw-wood { background: var(--yellow); }
+.sw-steel { background: var(--blue); }
+.fast { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; font-size: 14px; color: var(--muted); cursor: pointer; }
+.fast input { width: 18px; height: 18px; accent-color: var(--accent); }
+.test { margin-left: auto; min-width: 150px; }
+@media (max-width: 640px) { .test { margin-left: 0; flex: 1 1 100%; } }
+
+.stage { position: relative; border: 1px solid var(--line-strong); border-radius: var(--radius-m); overflow: hidden; background: var(--bg); }
+#canvas { display: block; width: 100%; touch-action: none; cursor: crosshair; }
+.stage.testing #canvas, .stage.done #canvas { cursor: pointer; }
+.stage.testing #canvas { cursor: default; }
+
+/* Melding oppå lerretet, der blikket er. */
+.toast {
+  position: absolute; top: 12px; left: 50%; transform: translateX(-50%); max-width: min(560px, calc(100% - 24px));
+  padding: 9px 16px; border: 1px solid var(--line-strong); border-radius: 999px; background: var(--surface);
+  box-shadow: var(--shadow); font-size: 14px; text-align: center; animation: drop .25s var(--ease);
+}
+.toast.warn { border-color: var(--danger); }
+.toast.warn::before { content: '!'; display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 8px; border-radius: 50%; background: var(--danger); color: #fff; font-weight: 700; font-size: 12px; vertical-align: 1px; }
+@keyframes drop { from { opacity: 0; transform: translate(-50%, -8px); } }
+@media (max-width: 640px) { .toast { border-radius: var(--radius-m); top: 8px; font-size: 13px; padding: 8px 12px; } }
+
+.result {
+  position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(440px, calc(100% - 24px));
+  padding: 18px 20px; border: 1px solid var(--line-strong); border-radius: var(--radius-l);
+  background: var(--surface); box-shadow: var(--shadow); text-align: center;
+  animation: rise .35s var(--ease);
+}
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 12px); } }
+/* På smale skjermer er lerretet for lite til å ha resultatet oppå seg: da står det under. */
+@media (max-width: 640px) {
+  .result { position: static; transform: none; width: auto; margin: 10px; box-shadow: none; animation: none; }
+}
+.result h3 { font-family: var(--font-display); font-weight: 400; font-size: 30px; }
+.result p { margin-top: 6px; font-size: 14.5px; color: var(--muted); }
+.result .toolbar { justify-content: center; margin-top: 14px; }
+.result .result-stars { font-size: 28px; letter-spacing: 6px; color: var(--accent); margin: 0 0 4px; }
+.result .result-stars .empty { color: var(--line-strong); }
+.result.failed .result-stars { display: none; }
+
+.stress-legend i { border-radius: 2px !important; height: 4px !important; width: 18px !important; }
+.lg-ok { background: var(--accent); }
+.lg-mid { background: var(--yellow); }
+.lg-hot { background: var(--danger); }
+
+.stats { margin-top: 16px; }
+.stats .stat-value { font-size: 26px; white-space: nowrap; }
+.attribution { margin-top: 20px; max-width: 84ch; line-height: 1.9; }

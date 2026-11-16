@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Pyodide (Python kompilert til WebAssembly) lastes fra jsDelivr. Prisene kommer fra hvakosterstrommen.no. Strømsmart-API-et kjører på Cloud Run (run.app). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'wasm-unsafe-eval'; connect-src 'self' https://cdn.jsdelivr.net https://www.hvakosterstrommen.no https://*.europe-west2.run.app https://*.goatcounter.com; object-src 'none'; base-uri 'self'">
+  <title>Strømsmart: når er strømmen billigst?</title>
+  <meta name="description" content="Se dagens og morgendagens spotpriser og finn det billigste tidspunktet å lade elbilen eller kjøre vaskemaskinen. Analysen er skrevet i Python og kjører i nettleseren.">
+  <meta property="og:url" content="https://in-prosjekter.pages.dev/projects/stromsmart/">
+  <link rel="canonical" href="https://in-prosjekter.pages.dev/projects/stromsmart/">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="icon" href="../../favicon.svg?v=2" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../../assets/apple-touch-icon.png">
+  <link rel="manifest" href="../../site.webmanifest">
+  <meta name="theme-color" content="#0a0c0b" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f3f5f2" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ibrahim Nur">
+  <meta property="og:title" content="Strømsmart: når er strømmen billigst?">
+  <meta property="og:description" content="Se dagens og morgendagens spotpriser og finn det billigste tidspunktet å lade elbilen eller kjøre vaskemaskinen. Analysen er skrevet i Python og kjører i nettleseren.">
+  <meta property="og:locale" content="nb_NO">
+  <meta property="og:image" content="https://in-prosjekter.pages.dev/assets/og/stromsmart.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="preload" href="../../assets/fonts/instrument-serif.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../../assets/fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../../assets/css/base.css">
+  <link rel="stylesheet" href="../../assets/css/app.css">
+  <link rel="stylesheet" href="style.css">
+  <script src="../../assets/js/theme-init.js"></script>
+  <script type="module" src="../../assets/js/app-shell.js"></script>
+  <script type="module" src="main.js"></script>
+</head>
+<body data-project="stromsmart">
+  <main class="app" id="app">
+    <header class="app-intro">
+      <p class="eyebrow">Python · Live spotpriser</p>
+      <h1>Strømsmart</h1>
+      <p>Velg hva du skal bruke strøm på, så regner Python ut når det er billigst. Prisene hentes direkte fra hvakosterstrommen.no.</p>
+    </header>
+
+    <div class="layout">
+      <section class="stack" aria-label="Priser og plan">
+        <p class="state" id="state" role="status" aria-live="polite" hidden></p>
+
+        <div class="panel answer waiting" id="answer">
+          <p class="eyebrow" id="answer-label">Billigste tidspunkt</p>
+          <p class="answer-main" id="answer-main">...</p>
+          <p class="answer-sub" id="answer-sub" aria-live="polite">Henter priser...</p>
+        </div>
+
+        <div class="panel" id="chart-panel">
+          <h2 class="panel-title" id="chart-title">Spotpris (øre/kWh)</h2>
+          <div class="chart" id="chart"></div>
+          <div class="legend">
+            <span><i class="sw-chosen"></i>Valgt tidsrom</span>
+            <span><i class="sw-other"></i>Øvrige timer</span>
+            <span><i class="sw-past"></i>Passert</span>
+          </div>
+        </div>
+
+        <div class="stats" id="stats">
+          <div class="stat"><p class="stat-label">Lavest</p><p class="stat-value" id="s-min">-</p></div>
+          <div class="stat"><p class="stat-label">Snitt</p><p class="stat-value" id="s-mean">-</p></div>
+          <div class="stat"><p class="stat-label">Høyest</p><p class="stat-value" id="s-max">-</p></div>
+          <div class="stat"><p class="stat-label">Akkurat nå</p><p class="stat-value" id="s-now">-</p></div>
+        </div>
+
+        <details class="panel source">
+          <summary>Se Python-koden som gjør utregningen</summary>
+          <pre id="source" tabindex="0">Laster...</pre>
+        </details>
+      </section>
+
+      <aside class="panel stack controls">
+        <h2 class="panel-title">Hva skal du bruke strøm på?</h2>
+        <div class="presets" id="presets" role="group" aria-label="Forhåndsvalg"></div>
+
+        <label class="field">
+          <span>Strømforbruk (kWh)</span>
+          <input class="input" id="kwh" type="number" inputmode="decimal" min="0.1" max="200" step="0.1" value="30">
+        </label>
+
+        <div class="field">
+          <span id="lbl-mode">Kan forbruket deles opp?</span>
+          <div class="seg" role="radiogroup" aria-labelledby="lbl-mode" id="mode">
+            <label><input type="radio" name="mode" value="flexible" checked><span>Ja, i bolker</span></label>
+            <label><input type="radio" name="mode" value="window"><span>Nei, i ett strekk</span></label>
+          </div>
+        </div>
+
+        <label class="field" id="field-kw">
+          <span>Effekt (kW)</span>
+          <input class="input" id="kw" type="number" inputmode="decimal" min="0.1" max="50" step="0.1" value="7.4">
+        </label>
+        <label class="field" id="field-hours" hidden>
+          <span>Varighet (timer)</span>
+          <input class="input" id="hours" type="number" inputmode="decimal" min="0.25" max="24" step="0.25" value="2">
+        </label>
+
+        <div class="field">
+          <label class="check"><input type="checkbox" id="use-deadline" checked> <span>Må være ferdig innen</span></label>
+          <input class="input" id="deadline" type="time" value="07:00" aria-label="Klokkeslett for frist">
+        </div>
+
+        <hr>
+
+        <label class="field">
+          <span>Prisområde</span>
+          <select class="select" id="area">
+            <option value="NO1">NO1 · Østlandet</option>
+            <option value="NO2">NO2 · Sørlandet</option>
+            <option value="NO3">NO3 · Midt-Norge</option>
+            <option value="NO4">NO4 · Nord-Norge</option>
+            <option value="NO5">NO5 · Vestlandet</option>
+          </select>
+        </label>
+        <label class="check"><input type="checkbox" id="vat" checked> <span>Vis priser med mva</span></label>
+        <p class="hint">Spotpris uten nettleie, påslag og strømstøtte. Nord-Norge har ikke mva på strøm.</p>
+      </aside>
+    </div>
+
+    <p class="hint attribution">
+      <span id="runtime">Python-kjøretiden lastes...</span>
+      Prisdata fra <a href="https://www.hvakosterstrommen.no" target="_blank" rel="noopener noreferrer">hvakosterstrommen.no</a>.
+    </p>
+  </main>
+</body>
+</html>

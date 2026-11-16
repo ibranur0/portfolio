@@ -1,0 +1,64 @@
+/* Hver forfatter har sin farge. --who settes av klassen og brukes av prikker, celler og noder. */
+.by-ada { --who: var(--accent); }
+.by-bo { --who: var(--blue); }
+.by-cleo { --who: var(--rose); }
+
+.bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; }
+.badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; font-size: 13.5px; border: 1px solid var(--yellow); }
+.badge::before { content: '≠'; font-weight: 700; color: var(--yellow); }
+.badge.ok { border-color: var(--line-strong); }
+.badge.ok::before { content: '✓'; color: var(--green); }
+.story { margin-top: 14px; min-height: 3.2em; font-size: clamp(16px, 1.7vw, 19px); max-width: 78ch; }
+
+.editors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 900px) { .editors { grid-template-columns: minmax(0, 1fr); } }
+.card { display: grid; gap: 10px; align-content: start; border-top: 3px solid var(--who); transition: border-color .3s, opacity .3s; }
+.card.offline { border-style: dashed; border-top-style: dashed; }
+.card-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.card-name { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 400; font-size: 28px; }
+.dot { width: 12px; height: 12px; border-radius: 50%; background: var(--who); }
+.card.offline .dot { background: transparent; border: 2px dashed var(--who); }
+.card textarea { display: block; padding: 12px 14px; min-height: 104px; resize: vertical; font-size: 16px; line-height: 1.55; }
+.card-state { font-size: 13px; color: var(--muted); min-height: 2.9em; }
+
+.strip { display: flex; flex-wrap: wrap; gap: 3px; max-height: 132px; overflow-y: auto; padding-top: 10px; border-top: 1px solid var(--line); }
+.cell {
+  display: grid; place-items: center; min-width: 20px; height: 26px; padding: 0 3px; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 13px; background: var(--surface-2); box-shadow: inset 0 -3px 0 var(--who);
+  animation: appear .3s var(--ease);
+}
+.cell.gone { color: var(--muted); text-decoration: line-through; background: transparent; box-shadow: inset 0 0 0 1px var(--line); }
+@keyframes appear { from { transform: scale(.6); opacity: 0; } }
+
+.lower { display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .lower { grid-template-columns: minmax(0, 1fr); } }
+
+#network { width: 100%; height: auto; max-width: 340px; margin: 0 auto 8px; }
+.link { stroke: var(--line-strong); stroke-width: 1.5; }
+.link.cut { stroke: var(--danger); stroke-dasharray: 3 6; opacity: .7; }
+.node { cursor: pointer; }
+.node-body { fill: var(--who); stroke: var(--who); stroke-width: 2; transition: fill .25s; }
+.node.offline .node-body { fill: var(--bg); stroke-dasharray: 4 5; }
+.node-name { fill: var(--accent-ink); font-family: var(--font-display); font-size: 17px; text-anchor: middle; pointer-events: none; }
+.node.offline .node-name { fill: var(--text); }
+.node-held { fill: var(--muted); font-family: var(--font-mono); font-size: 10.5px; text-anchor: middle; }
+.node:focus-visible { outline: none; }
+.node:focus-visible .node-body { stroke: var(--text); stroke-width: 3; }
+.msg { fill: var(--who); pointer-events: none; }
+.msg.delete { fill: var(--bg); stroke: var(--who); stroke-width: 2; }
+
+.how { display: grid; gap: 12px; counter-reset: how; margin-bottom: 16px; }
+.how li { position: relative; padding-left: 34px; font-size: 15px; color: var(--muted); counter-increment: how; }
+.how li::before { content: counter(how); position: absolute; left: 0; top: 1px; width: 22px; height: 22px; display: grid; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; font-family: var(--font-mono); font-size: 11px; color: var(--text); }
+.how strong { color: var(--text); font-weight: 500; }
+.explain code { font-family: var(--font-mono); font-size: 12.5px; }
+
+/* ---------- Ekte synkronisering mellom faner ---------- */
+.lead { max-width: 80ch; }
+.live .bar { align-items: flex-start; }
+.live .badge { white-space: nowrap; border-color: var(--line-strong); }
+.live .badge::before { content: '○'; color: var(--muted); }
+.live .badge.ok::before { content: '●'; color: var(--green); }
+.live textarea { display: block; padding: 12px 14px; min-height: 96px; resize: vertical; font-size: 16px; line-height: 1.55; }
+.live .strip { border-top: 0; padding-top: 0; min-height: 26px; }
+.live.offline { border-style: dashed; }

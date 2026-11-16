@@ -1,0 +1,25 @@
+.controls { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: end; }
+.speed { min-width: 180px; flex: 0 1 220px; }
+.actions { margin: 18px 0 12px; }
+/* På mobil: hovedknappen i full bredde, og de fire andre to og to under. */
+@media (max-width: 560px) {
+  .actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .actions .btn-primary { grid-column: 1 / -1; }
+  .actions .btn { padding: 0 10px; }
+}
+.note { min-height: 1.6em; margin-bottom: 10px; }
+
+.grid-wrap { width: 100%; border: 1px solid var(--line-strong); border-radius: var(--radius-m); overflow: hidden; background: var(--surface); line-height: 0; }
+#grid { touch-action: none; cursor: crosshair; margin: 0 auto; }
+
+.below { display: grid; grid-template-columns: 1fr minmax(0, 520px); gap: 16px; align-items: center; margin-top: 16px; }
+@media (max-width: 900px) { .below { grid-template-columns: 1fr; } }
+.below .stat-value { font-size: 26px; white-space: nowrap; }
+
+.sw { border: 1px solid var(--line); }
+.sw-start { background: var(--accent); border-radius: 50% !important; }
+.sw-goal { background: var(--surface); border: 3px solid var(--text); border-radius: 50% !important; }
+.sw-wall { background: color-mix(in srgb, var(--text) 55%, var(--surface)); }
+.sw-mud { background: color-mix(in srgb, var(--yellow) 45%, var(--surface)); }
+.sw-visited { background: color-mix(in srgb, var(--blue) 30%, var(--surface)); }
+.sw-path { background: var(--accent); }

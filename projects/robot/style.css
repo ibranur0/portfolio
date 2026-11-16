@@ -1,0 +1,82 @@
+.inline { text-decoration: underline; text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 3px; color: var(--text); }
+.inline:hover { color: var(--accent); }
+
+.levels { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.level {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 42px; padding: 0 16px;
+  border: 1px solid var(--line); border-radius: 999px; background: transparent;
+  font-size: 14.5px; color: var(--muted); transition: all .2s var(--ease);
+}
+.level:hover { color: var(--text); border-color: var(--line-strong); }
+.level[aria-pressed='true'] { background: var(--text); border-color: var(--text); color: var(--bg); }
+.level .num { font-family: var(--font-mono); font-size: 11px; }
+.level .won { font-size: 12px; letter-spacing: 1px; color: var(--accent); }
+.level[aria-pressed='true'] .won { color: inherit; }
+
+.game { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 16px; align-items: start; }
+@media (max-width: 900px) { .game { grid-template-columns: minmax(0, 1fr); } }
+.side, .board { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+
+.level-name { font-family: var(--font-display); font-weight: 400; font-size: clamp(30px, 4vw, 40px); line-height: 1.05; }
+.level-text { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+/* Editoren: linjenummer til venstre, og en markør bak linjen roboten utfører */
+.editor { --lh: 23px; --pad: 12px; display: grid; grid-template-columns: auto minmax(0, 1fr); height: 268px; border: 1px solid var(--line-strong); border-radius: var(--radius-m); overflow: hidden; background: var(--bg); font-family: var(--font-mono); font-size: 14px; line-height: var(--lh); }
+.editor:focus-within { border-color: var(--accent); }
+.gutter { padding: var(--pad) 8px var(--pad) 12px; overflow: hidden; text-align: right; color: var(--muted); background: var(--surface-2); border-right: 1px solid var(--line); user-select: none; }
+.gutter span { display: block; padding: 0 4px; border-radius: 4px; }
+.gutter .active { background: var(--accent); color: var(--accent-ink); }
+.gutter .failed { background: var(--danger); color: #fff; }
+.code { position: relative; overflow: hidden; }
+.marker { position: absolute; left: 0; right: 0; height: var(--lh); background: var(--accent-soft); pointer-events: none; }
+.marker.failed { background: color-mix(in srgb, var(--danger) 18%, transparent); }
+/* Litt mindre skrift på telefon, så kommentarene i startkoden får plass uten sidelengs rulling. */
+@media (max-width: 420px) { .editor { font-size: 13px; } }
+#editor { position: relative; display: block; width: 100%; height: 100%; padding: var(--pad) 14px; resize: none; border: 0; outline: 0; background: transparent; color: var(--text); font: inherit; tab-size: 2; white-space: pre; overflow: auto; }
+
+.speed { display: inline-flex; align-items: center; gap: 8px; margin-left: auto; font-size: 13px; color: var(--muted); }
+.speed input { width: 96px; }
+.status { min-height: 3em; font-size: 14.5px; color: var(--muted); }
+.status.error { color: var(--text); }
+.status strong { color: var(--danger); font-weight: 600; }
+
+.palette { padding-top: 12px; border-top: 1px solid var(--line); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.chips button { padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface-2); font-family: var(--font-mono); font-size: 12.5px; transition: border-color .2s; }
+.chips button:hover { border-color: var(--accent); }
+.chips button.sensor { color: var(--blue); }
+.chips button.shape { color: var(--muted); }
+
+.board-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 20px; }
+.maps { display: flex; gap: 6px; }
+.maps span { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border: 1px solid var(--line); border-radius: 999px; font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.maps .now { border-color: var(--text); color: var(--text); }
+.maps .passed { border-color: var(--accent); color: var(--accent); }
+.maps .failed { border-color: var(--danger); color: var(--danger); }
+.gauges { display: flex; gap: 20px; }
+.gauges dt { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.gauges dd { font-family: var(--font-display); font-size: 24px; line-height: 1.1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.gauges .over { color: var(--yellow); }
+
+.stage { position: relative; display: grid; place-items: center; min-height: 300px; padding: 16px; border: 1px solid var(--line-strong); border-radius: var(--radius-m); overflow: hidden; background: var(--bg); }
+.result {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); width: min(400px, calc(100% - 24px));
+  padding: 16px 18px; border: 1px solid var(--line-strong); border-radius: var(--radius-l);
+  background: var(--surface); box-shadow: var(--shadow); text-align: center; animation: rise .35s var(--ease);
+}
+@keyframes rise { from { opacity: 0; transform: translate(-50%, 12px); } }
+@media (max-width: 640px) { .stage { display: block; } .result { position: static; transform: none; width: auto; margin-top: 12px; box-shadow: none; animation: none; } #canvas { margin: 0 auto; } }
+.result h3 { font-family: var(--font-display); font-weight: 400; font-size: 28px; }
+.result p { margin-top: 6px; font-size: 14.5px; color: var(--muted); }
+.result .toolbar { justify-content: center; margin-top: 12px; }
+.result .result-stars { font-size: 24px; letter-spacing: 6px; color: var(--accent); margin: 0 0 4px; }
+.result .result-stars .empty { color: var(--line-strong); }
+.result.failed .result-stars { display: none; }
+
+.lg-robot { background: var(--accent); border-radius: 4px !important; }
+.lg-crystal { background: var(--blue); transform: rotate(45deg) scale(.8); }
+.lg-goal { border: 3px solid var(--accent); border-radius: 50% !important; }
+.lg-trail { background: var(--accent-soft); border: 1px solid var(--line-strong); }
+
+.attribution { margin-top: 20px; max-width: 84ch; }
+.attribution code { font-family: var(--font-mono); font-size: 12.5px; }

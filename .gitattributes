@@ -1,0 +1,5 @@
+# Vanlige linjeskift (LF) i alle tekstfiler, også når repoet hentes ut på Windows.
+* text=auto eol=lf
+
+*.png binary
+*.woff2 binary
