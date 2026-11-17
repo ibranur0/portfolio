@@ -5,7 +5,7 @@ export const site = {
   title: 'Utvikler',
   location: 'Oslo',
   email: 'ibrahimnur003@gmail.com',
-  seeking: 'Utviklerstilling',
+  seeking: 'IT-stillinger',
 
   // Uten brukernavn vises ingen GitHub-lenker.
   github: { user: 'ibranur0', repo: 'portfolio', branch: 'main' },
@@ -24,18 +24,27 @@ export const site = {
     'Nå leter jeg etter min første jobb i IT, et sted der jeg kan fortsette å lære.',
   ],
 
-  // project er prosjektet der jeg har brukt ferdigheten, og forsiden lenker dit.
-  // note brukes når det ikke finnes noe prosjekt.
+  // Teknologiene på forsiden. project er prosjektet der den er brukt, og forsiden lenker dit.
   skills: [
     {
       group: 'Språk',
       items: [
         { name: 'JavaScript', project: 'kvist' },
         { name: 'Java', project: 'stromsmart' }, // API-et bak Strømsmart
-        { name: 'Kotlin', project: null, note: 'Fra studiet' },
         { name: 'Python', project: 'stromsmart' },
         { name: 'SQL', project: 'sql-lab' },
         { name: 'GLSL', project: 'straale' },
+      ],
+    },
+    {
+      group: 'Verktøy',
+      items: [
+        { name: 'PostgreSQL', project: 'sql-lab' },
+        { name: 'Spring Boot', project: 'stromsmart' },
+        { name: 'REST-API', project: 'stromsmart' },
+        { name: 'WebGL 2', project: 'straale' },
+        { name: 'WebAssembly', project: 'sql-lab' },
+        { name: 'Web Workers', project: 'sjakk' },
       ],
     },
     {
@@ -47,26 +56,17 @@ export const site = {
         { name: 'Automater og regex', project: 'regex' },
         { name: 'Søk i spilltrær', project: 'sjakk' },
         { name: 'Fysikksimulering', project: 'bro' },
-      ],
-    },
-    {
-      group: 'Data og grafikk',
-      items: [
-        { name: 'PostgreSQL', project: 'sql-lab' },
-        { name: 'Spørreplaner og indekser', project: 'sql-lab' },
-        { name: 'REST-API-er', project: 'stromsmart' },
-        { name: 'WebGL 2 og strålesporing', project: 'straale' },
         { name: 'Nevrale nettverk', project: 'nevralt' },
       ],
     },
     {
-      group: 'Arbeidsmåte',
+      group: 'Testing',
       items: [
         { name: 'Egenskapstester med feilinjeksjon', project: 'raft' },
         { name: 'Differensiell testing', project: 'regex' },
         { name: 'Enhetstester', project: 'kvist' },
-        { name: 'Web Workers', project: 'sjakk' },
-        { name: 'Git', project: null },
+        { name: 'Gradientkontroll', project: 'nevralt' },
+        { name: 'Perft', project: 'sjakk' },
       ],
     },
   ],
