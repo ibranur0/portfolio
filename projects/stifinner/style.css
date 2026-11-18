@@ -13,7 +13,7 @@
 #grid { touch-action: none; cursor: crosshair; margin: 0 auto; }
 
 .below { display: grid; grid-template-columns: 1fr minmax(0, 520px); gap: 16px; align-items: center; margin-top: 16px; }
-@media (max-width: 900px) { .below { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .below { grid-template-columns: minmax(0, 1fr); } }
 .below .stat-value { font-size: 26px; white-space: nowrap; }
 
 .sw { border: 1px solid var(--line); }

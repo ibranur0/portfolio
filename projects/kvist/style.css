@@ -6,8 +6,8 @@
 .status code { font-family: var(--font-mono); font-size: 12.5px; }
 
 .ide { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 16px; align-items: start; }
-.left, .right { display: grid; gap: 16px; min-width: 0; }
-@media (max-width: 900px) { .ide { grid-template-columns: 1fr; } }
+.left, .right { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (max-width: 900px) { .ide { grid-template-columns: minmax(0, 1fr); } }
 
 /* Editor: linjenummer til venstre, markør for aktiv linje bak teksten */
 .editor-panel { padding: 0; overflow: hidden; }

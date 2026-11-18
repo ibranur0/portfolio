@@ -194,7 +194,7 @@ function initReveal() {
       entry.target.classList.add('in');
       io.unobserve(entry.target);
     });
-  }, { rootMargin: '0px 0px -8% 0px' });
+  }, { rootMargin: '0px 0px -5% 0px' });
   items.forEach((n) => io.observe(n));
 }
 

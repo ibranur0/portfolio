@@ -23,7 +23,7 @@ export const projects = [
     challenge:
       'Feil i distribuerte algoritmer viser seg bare i sjeldne rekkefølger av krasj og forsinkede meldinger. De er nesten umulige å finne ved å prøve seg frem.',
     solution:
-      'Hele klyngen kjører i en deterministisk simulering der klokke, nettverk og tilfeldighet styres av ett frø. Testene har kjørt 20\u00a0000 tilfeldige feilscenarier og kontrollerer fire sikkerhetsegenskaper hvert tikk. En mutasjonstest fjerner en av Rafts regler og bekrefter at kontrollene oppdager det.',
+      'Hele klyngen kjører i en deterministisk simulering der klokke, nettverk og tilfeldighet styres av ett frø. Testene kjører tusenvis av tilfeldige feilscenarier og kontrollerer fire sikkerhetsegenskaper hvert tikk. En mutasjonstest fjerner en av Rafts regler og bekrefter at kontrollene oppdager det.',
     learned:
       'Deterministisk simulering gjør feil i distribuerte systemer mulige å teste. Når en test feiler, gir frøet nøyaktig samme kjøring på nytt, og feilen kan studeres steg for steg.',
   },
@@ -89,7 +89,7 @@ export const projects = [
     solution:
       'Python-modulen har en funksjon for sammenhengende vindu og en for fleksibel lading. Den samme filen testes med unittest på kommandolinjen og lastes uendret inn i nettleseren.',
     learned:
-      'Rene funksjoner uten avhengigheter er lette å teste og lette å flytte. Den samme koden kjører nå tre steder: i testene, i terminalen og i nettleseren.',
+      'Rene funksjoner uten avhengigheter er lette å teste og lette å flytte. Den samme Python-filen kjører i testene, i terminalen og i nettleseren. API-et i Java er skrevet på nytt, men testes med de samme tilfellene.',
   },
   {
     slug: 'bro',
@@ -234,7 +234,7 @@ const BUILD = {
   stromsmart: [
     { title: 'Samme Python-fil overalt', text: 'stromsmart.py bruker bare standardbiblioteket og har ingen sideeffekter. Den samme filen testes med unittest, kjøres fra terminalen og lastes uendret inn i nettleseren med Pyodide.' },
     { title: 'To ulike problemer', text: 'Et apparat som må gå sammenhengende: det billigste vinduet starter eller slutter alltid på en intervallgrense, så det holder å prøve dem. Lading som kan deles opp: fyll de billigste intervallene først, som er optimalt fordi timene er uavhengige.' },
-    { title: 'JavaScript og Python snakker via JSON', text: 'Python kjører i en egen tråd (Web Worker), og JavaScript snakker med den gjennom en funksjon: JSON inn, JSON ut. Prisene vises med en gang, og planen kommer når Python har startet et par sekunder senere.' },
+    { title: 'JavaScript og Python snakker via JSON', text: 'Python kjører i en egen tråd (Web Worker), og JavaScript snakker med den gjennom en funksjon: JSON inn, JSON ut. Prisene vises med en gang. Planen kommer som regel først fra API-et, og Python tar over når det har startet.' },
     { title: 'Et API i Java ved siden av', text: 'Planleggingen er også skrevet i Java, som et API med Spring Boot og PostgreSQL. Det henter prisene hver halvtime og lagrer dem. Siden spør API-et mens Python lastes ned, og viser svaret derfra hvis det kommer først. Testene bruker de samme tilfellene i begge språk, så de to regner likt.' },
   ],
   bro: [

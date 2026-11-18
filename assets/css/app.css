@@ -39,7 +39,7 @@ body[data-project] .app-bar { position: fixed; left: 0; right: 0; height: 61px; 
 .panel-title { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 400; margin-bottom: 14px; }
 
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 20px; align-items: start; }
-@media (max-width: 900px) { .layout { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
 /* minmax(0, 1fr) hindrer at en bred <pre> presser kolonnen ut over naboen. */
 .stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 
